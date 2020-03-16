@@ -1,6 +1,7 @@
 import * as fieldComponents from 'lib/field-components'
 import {Button, Select, TextInput} from '@dadi/edit-ui'
 import {Close, FilterList, KeyboardReturn, Search} from '@material-ui/icons'
+import {buildUrl} from 'lib/util/url'
 import {connectRedux} from 'lib/redux'
 import {connectRouter} from 'lib/router'
 import {getFieldType} from 'lib/fields'
@@ -20,6 +21,16 @@ const MIMETYPE_OPTIONS = [
 
 // http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
 const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
+
+const getSortingDragAndDropFieldKey = collection => {
+  return Object.keys(collection.fields).find(key => {
+    return (
+      collection.fields[key].publish &&
+      collection.fields[key].publish &&
+      collection.fields[key].publish.allowDragAndDropOrdering
+    )
+  })
+}
 
 /**
  * A list of document filters.
@@ -47,6 +58,7 @@ class DocumentListController extends React.Component {
 
     this.searchInputRef = React.createRef()
 
+    this.buildUrl = buildUrl.bind(this)
     this.selectField = this.selectField.bind(this)
     this.selectOperator = event =>
       this.setState({selectedFilterOperator: event.target.value})
@@ -341,6 +353,23 @@ class DocumentListController extends React.Component {
       </Button>
     )
 
+    const sortableField = getSortingDragAndDropFieldKey(collection)
+    const reorderHref = sortableField
+      ? this.buildUrl() + `/sort/${sortableField}`
+      : undefined
+
+    const reorderButton = reorderHref && (
+      <Button
+        accent="positive"
+        className={styles['create-new-button']}
+        data-name="create-new-button"
+        fillStyle="filled"
+        onClick={() => route.history.push(reorderHref)}
+      >
+        Reorder
+      </Button>
+    )
+
     return (
       <div className={containerStyle.getClasses()}>
         <div className={styles['top-bar']}>
@@ -375,6 +404,8 @@ class DocumentListController extends React.Component {
               {this.renderSearchInput()}
 
               {mimeTypeDropdown}
+
+              {reorderButton}
 
               {addFilterButton}
 
@@ -632,6 +663,7 @@ class DocumentListController extends React.Component {
 
   renderSearchInput() {
     const {collection, isSmallWindow, searchableFields} = this.props
+
     const {search: searchValue, selectedSuggestionIndex} = this.state
 
     return (

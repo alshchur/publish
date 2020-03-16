@@ -2,8 +2,13 @@ import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import React from 'react'
 import {slugify} from '../../../shared/lib/string'
+import {SortingView} from 'views/SortingView'
 
 const baseRoutes = [
+  {
+    path: '/:collection/sort/:sortField',
+    render: props => <SortingView {...props} />
+  },
   {
     path: '/:collection/new/:section?',
     render: props => <DocumentEditView {...props} isNewDocument />
