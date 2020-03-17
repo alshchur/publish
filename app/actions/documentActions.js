@@ -226,7 +226,8 @@ export function fetchDocumentList({
   filters,
   page,
   sortBy,
-  sortOrder
+  sortOrder,
+  limit
 }) {
   return (dispatch, getState) => {
     const {app, documents} = getState()
@@ -275,6 +276,10 @@ export function fetchDocumentList({
         collection,
         fields
       })
+    }
+
+    if (limit) {
+      query.limitTo(limit)
     }
 
     query = query

@@ -283,7 +283,10 @@ export default class StringArray extends React.Component {
       onFocus,
       placeholder,
       publishSettings = {},
-      valuesArray
+      valuesArray,
+      showListOnly,
+      containerClassname,
+      itemRenderer
     } = this.props
     const {currentY, dragCurrentIndex, dragOriginalIndex} = this.state
     const {dragStart, dragBottomLimit} = this
@@ -324,25 +327,29 @@ export default class StringArray extends React.Component {
               onMouseDown={this.handleDragStart.bind(this, index)}
             />
 
-            <TextInput
-              autoComplete="off"
-              autoresize
-              name={name}
-              onBlur={onBlur}
-              onFocus={onFocus}
-              onChange={this.handleInputChange.bind(this, index)}
-              onKeyDown={this.handleKeyDown.bind(this, index)}
-              placeholder={placeholder}
-              readOnly={readOnly}
-              ref={ref => {
-                this.inputRefs[index] = ref
-              }}
-              resizable={resizable}
-              rows={rows}
-              simple
-              type={type}
-              value={value}
-            />
+            {itemRenderer ? (
+              itemRenderer(value)
+            ) : (
+              <TextInput
+                autoComplete="off"
+                autoresize
+                name={name}
+                onBlur={onBlur}
+                onFocus={onFocus}
+                onChange={this.handleInputChange.bind(this, index)}
+                onKeyDown={this.handleKeyDown.bind(this, index)}
+                placeholder={placeholder}
+                readOnly={readOnly}
+                ref={ref => {
+                  this.inputRefs[index] = ref
+                }}
+                resizable={resizable}
+                rows={rows}
+                simple
+                type={type}
+                value={value}
+              />
+            )}
 
             {link && (
               <Button
@@ -357,14 +364,16 @@ export default class StringArray extends React.Component {
               </Button>
             )}
 
-            <Button
-              accent="negative"
-              className={styles['remove-button']}
-              compact
-              onClick={this.handleDeleteRow.bind(this, index)}
-            >
-              Remove
-            </Button>
+            {!showListOnly && (
+              <Button
+                accent="negative"
+                className={styles['remove-button']}
+                compact
+                onClick={this.handleDeleteRow.bind(this, index)}
+              >
+                Remove
+              </Button>
+            )}
           </div>
         )
       })
@@ -385,7 +394,7 @@ export default class StringArray extends React.Component {
       <>
         {valuesArray && (
           <div
-            className={styles['list-container']}
+            className={[styles['list-container'], containerClassname].join(' ')}
             ref={ref => {
               this.listContainerRef = ref
             }}
@@ -393,29 +402,31 @@ export default class StringArray extends React.Component {
             {renderItems}
           </div>
         )}
-        <div className={styles['list-item']}>
-          <Add className={styles['icon-add']} />
+        {!showListOnly && (
+          <div className={styles['list-item']}>
+            <Add className={styles['icon-add']} />
 
-          <TextInput
-            autoComplete="off"
-            autoresize
-            name={name}
-            onBlur={onBlur}
-            onFocus={onFocus}
-            onChange={this.handleInputChange.bind(this, valuesArray.length)}
-            onKeyDown={this.handleKeyDown.bind(this, valuesArray.length)}
-            placeholder={placeholder}
-            readOnly={readOnly}
-            ref={ref => {
-              this.inputRefs[valuesArray.length] = ref
-            }}
-            resizable={resizable}
-            rows={rows}
-            simple
-            type={type}
-            value={null}
-          />
-        </div>
+            <TextInput
+              autoComplete="off"
+              autoresize
+              name={name}
+              onBlur={onBlur}
+              onFocus={onFocus}
+              onChange={this.handleInputChange.bind(this, valuesArray.length)}
+              onKeyDown={this.handleKeyDown.bind(this, valuesArray.length)}
+              placeholder={placeholder}
+              readOnly={readOnly}
+              ref={ref => {
+                this.inputRefs[valuesArray.length] = ref
+              }}
+              resizable={resizable}
+              rows={rows}
+              simple
+              type={type}
+              value={null}
+            />
+          </div>
+        )}
       </>
     )
   }

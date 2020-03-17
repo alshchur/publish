@@ -13,7 +13,7 @@
     "test:functional": "npm run test:functional:pre && npm run test:functional:run",
     "test:lint": "eslint --ext js,jsx . && prettier --check \"./**/*.{js,jsx,json,md,html,css}\"",
     "watch": "NODE_ENV=development npm-run-all --parallel watch:server watch:app",
-    "watch:app": "webpack --watch --mode=development",
+    "watch:app": "webpack -d --watch --mode=development",
     "watch:server": "nodemon \"./start.js\" --watch \"./server\""
   },
   "keywords": [],
@@ -98,7 +98,6 @@
     "colors": "^1.3.3",
     "convict": "^4.4.1",
     "mdi-material-ui": "^6.7.0",
-    "react-beautiful-dnd": "^13.0.0",
     "request-promise": "^4.2.4",
     "restify": "^8.3.3",
     "restify-cookies": "^0.2.5"

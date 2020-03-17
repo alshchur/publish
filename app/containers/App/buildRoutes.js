@@ -2,7 +2,7 @@ import DocumentEditView from 'views/DocumentEditView/DocumentEditView'
 import DocumentListView from 'views/DocumentListView/DocumentListView'
 import React from 'react'
 import {slugify} from '../../../shared/lib/string'
-import {SortingView} from 'views/SortingView'
+import {SortingView} from 'views/SortingView/SortingView'
 
 const baseRoutes = [
   {
