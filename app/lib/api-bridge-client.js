@@ -19,7 +19,7 @@ function throttleAllow() {
   return ++callCount <= MAX_CALLS_PER_SECOND
 }
 
-const apiBridgeFetch = function(requestObject) {
+export const apiBridgeFetch = function(requestObject) {
   if (!throttleAllow()) {
     return Promise.reject('API_CALL_QUOTA_EXCEEDED')
   }

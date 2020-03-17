@@ -1,5 +1,6 @@
 import * as Constants from 'lib/constants'
 import * as documentActions from 'actions/documentActions'
+import * as sortingActions from 'actions/sortingActions'
 import {connectRedux} from 'lib/redux'
 import Header from 'containers/Header/Header'
 import React from 'react'
@@ -32,7 +33,11 @@ function mapState(state, ownProps) {
 
 const DOCUMENTS_QUERY_LIMIT = 999
 
-export const SortingView = connectRedux(mapState, documentActions)(props => {
+export const SortingView = connectRedux(
+  mapState,
+  documentActions,
+  sortingActions
+)(props => {
   const {collection, state, actions} = props
 
   const contentKey = `sorting_${collection.slug}`
@@ -44,6 +49,7 @@ export const SortingView = connectRedux(mapState, documentActions)(props => {
     actions.fetchDocumentList({
       collection,
       contentKey,
+      sortBy: 'order',
       limit: DOCUMENTS_QUERY_LIMIT
     })
   }, [])
@@ -61,7 +67,9 @@ export const SortingView = connectRedux(mapState, documentActions)(props => {
         <h1 className={tableListstyles.title}>Sort {collection.name}</h1>
         <div className={tableListstyles['table-wrapper']}>
           <SortableList
-            onChange={(...args) => console.log('onchange', {args})}
+            onChange={orderedItems =>
+              handleChangeOrder({orderedItems, actions, collection})
+            }
             valuesArray={valuesAsArray}
             showListOnly={true}
             containerClassname={styles['sortable-list-container']}
@@ -74,3 +82,13 @@ export const SortingView = connectRedux(mapState, documentActions)(props => {
     </React.Fragment>
   )
 })
+
+const handleChangeOrder = ({orderedItems, actions, collection}) => {
+  actions.updateSorting({
+    orderedItems: orderedItems.map(({_id}) => _id),
+    actions,
+    collection
+  })
+
+  console.log({actions})
+}
