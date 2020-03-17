@@ -48,12 +48,11 @@ export const SortingView = connectRedux(mapState, documentActions)(props => {
     })
   }, [])
 
-  const valuesAsArray = [
-    {label: 'one', value: 'one'},
-    {label: 'two', value: 'two'},
-    {label: 'three', value: 'three'},
-    {label: 'four', value: 'four'}
-  ]
+  const valuesAsArray =
+    (documents &&
+      documents.results &&
+      documents.results.map(({_id, name}) => ({_id, name}))) ||
+    []
 
   return (
     <React.Fragment>
@@ -62,17 +61,13 @@ export const SortingView = connectRedux(mapState, documentActions)(props => {
         <h1 className={tableListstyles.title}>Sort {collection.name}</h1>
         <div className={tableListstyles['table-wrapper']}>
           <SortableList
-            readOnly={true}
-            name={'blah'}
-            onBlur={() => console.log('onblur')}
             onChange={(...args) => console.log('onchange', {args})}
-            onFocus={() => console.log('onfocus')}
-            placeholder={'blah'}
-            publishSettings={{}}
             valuesArray={valuesAsArray}
             showListOnly={true}
             containerClassname={styles['sortable-list-container']}
-            itemRenderer={item => <div>{JSON.stringify(item)}</div>}
+            itemRenderer={item => (
+              <div style={{lineHeight: '40px'}}>{item.name}</div>
+            )}
           />
         </div>
       </main>
