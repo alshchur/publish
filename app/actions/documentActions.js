@@ -870,3 +870,47 @@ export function uploadMediaDocuments({contentKey, files}) {
       })
   }
 }
+
+/**
+ * Sends custom mass actions request to the remote API.
+ *
+ * @param  {Object}  api          API configuration object
+ * @param  {String}  bearerToken  API access token
+ * @param  {Array}   files        Files to be uploaded
+ */
+export function sendCustomMassActionRequest({filter, selection, endpoint, downloadable}) {
+  return (dispatch, getState) => {
+    const {app} = getState()
+    const {api} = app.config
+
+    const url = `${api.host}:${api.port}/${endpoint}`
+
+    const bearerToken = getState().user.accessToken
+
+
+    return fetch(url, {
+      body: JSON.stringify({
+        filter,
+        selection
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${bearerToken}`
+      },
+      method: 'POST'
+    }).then(response => {
+      if(downloadable){
+        response.blob().then(blob => {
+          let url = window.URL.createObjectURL(blob);
+          let a = document.createElement('a');
+          a.href = url;
+          a.download = downloadable.filename;
+          a.click();
+        });
+      }else{
+        console.error("at the moment only 'downloadable' custom endpoints are allowed")
+      }
+    })
+
+  }
+}

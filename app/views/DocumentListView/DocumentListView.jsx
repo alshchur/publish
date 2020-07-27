@@ -29,10 +29,34 @@ import styles from './DocumentListView.css'
 
 const MainWithHeader = ({children}) => (
   <>
-    <Header />
+    <Header/>
     <main className={styles.main}>{children}</main>
   </>
 )
+
+const CustomMassActions = ({collection, selection, filter, actions}) => {
+  const {settings: {publish: {customMassActions} = {}}} = collection
+  if (!customMassActions) {
+    return null;
+  }
+
+  const handleClick = ({endpoint, downloadable}) => {
+    actions.sendCustomMassActionRequest({filter, selection, endpoint, downloadable})
+  }
+
+  return <React.Fragment>
+    {customMassActions.map(({label, endpoint, displayButtonWhenEmptySelection, downloadable}) => <Button
+      key={`custom_mass_action_${endpoint}`}
+      accent="negative"
+      className={styles['delete-button']}
+      data-name="delete-button"
+      disabled={selection.length === 0 && !displayButtonWhenEmptySelection}
+      onClick={() => handleClick({endpoint, downloadable})}
+    >
+      {label}
+    </Button>)}
+  </React.Fragment>
+}
 
 class DocumentListView extends React.Component {
   constructor(props) {
@@ -70,8 +94,8 @@ class DocumentListView extends React.Component {
       const message = error
         ? `The document${wasDeleting > 1 ? 's' : ''} couldn't be deleted`
         : wasDeleting > 1
-        ? `${wasDeleting} documents have been deleted`
-        : 'The document has been deleted'
+          ? `${wasDeleting} documents have been deleted`
+          : 'The document has been deleted'
 
       actions.setNotification({
         message,
@@ -126,7 +150,7 @@ class DocumentListView extends React.Component {
           }
         })
 
-        return <Redirect to={redirectUrl} />
+        return <Redirect to={redirectUrl}/>
       }
 
       return (
@@ -258,7 +282,7 @@ class DocumentListView extends React.Component {
     if (!collection) {
       return (
         <MainWithHeader>
-          <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND} />
+          <ErrorMessage type={Constants.ERROR_ROUTE_NOT_FOUND}/>
         </MainWithHeader>
       )
     }
@@ -269,11 +293,11 @@ class DocumentListView extends React.Component {
           collection={collection}
           contentKey={contentKey}
           onEmptyList={() => (
-            <DocumentEditView {...this.props} isSingleDocument />
+            <DocumentEditView {...this.props} isSingleDocument/>
           )}
           onLoading={() => (
             <MainWithHeader>
-              <SpinningWheel />
+              <SpinningWheel/>
             </MainWithHeader>
           )}
           onNetworkError={this.handleNetworkError}
@@ -301,7 +325,7 @@ class DocumentListView extends React.Component {
         search: {...search, page: metadata.totalPages}
       })
 
-      return <Redirect to={redirectUrl} />
+      return <Redirect to={redirectUrl}/>
     }
 
     // Setting the page title.
@@ -344,7 +368,7 @@ class DocumentListView extends React.Component {
         </MainWithHeader>
 
         <div className={styles.toolbar}>
-          <NotificationCentre />
+          <NotificationCentre/>
 
           {hasDocuments && (
             <DocumentListToolbar
@@ -361,6 +385,13 @@ class DocumentListView extends React.Component {
               >
                 Delete{selection.length > 0 ? ` (${selection.length})` : ''}
               </Button>
+              <CustomMassActions
+                actions={this.props.actions}
+                filter={this.props.route.search.filter}
+                collection={collection}
+                selection={selection}
+              />
+
             </DocumentListToolbar>
           )}
         </div>
@@ -390,11 +421,11 @@ class DocumentListView extends React.Component {
         <DocumentList
           {...commonDocumentListProps}
           onRender={({
-            documents,
-            hasSelection,
-            onSelect,
-            selectedDocuments
-          }) => (
+                       documents,
+                       hasSelection,
+                       onSelect,
+                       selectedDocuments
+                     }) => (
             <MediaList
               documents={documents}
               hasSelection={hasSelection}
@@ -456,18 +487,18 @@ function mapState(state, ownProps) {
     params.collection === Constants.MEDIA_COLLECTION_SCHEMA.slug
       ? Constants.MEDIA_COLLECTION_SCHEMA
       : state.app.config.api.collections.find(collection => {
-          return collection.slug === params.collection
-        })
+        return collection.slug === params.collection
+      })
 
   const {group} = params
   const contentKey = isSingleDocument
     ? JSON.stringify({collection: collection && collection.slug})
     : JSON.stringify({
-        collection: collection && collection.slug,
-        group,
-        page: search.page || 1,
-        searchString
-      })
+      collection: collection && collection.slug,
+      group,
+      page: search.page || 1,
+      searchString
+    })
   const selectionKey = JSON.stringify({
     collection: collection && collection.slug,
     group
