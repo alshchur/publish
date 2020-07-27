@@ -154,7 +154,8 @@ export default class TextInputWithDatePicker extends React.Component {
       })
     } else {
       if (typeof onChange === 'function') {
-        onChange(null)
+        //the below line was causing a glitch - when you manually edit datetime field, it would reset it on invalidating
+        //onChange(null)
       }
 
       this.setState({
