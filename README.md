@@ -1,3 +1,6 @@
+@TODO:
+- here's an example how to configure API to provide CSV export: https://github.com/dadiplus/ppa/commit/a0c886c087807e294ea843989eb8fe2da3d1a193
+
 <img src="https://dadi.cloud/assets/products/dadi-publish-full.png" alt="DADI Publish" height="65"/>
 
 [![npm version](https://badge.fury.io/js/%40dadi%2Fpublish.svg)](https://badge.fury.io/js/%40dadi%2Fpublish)
